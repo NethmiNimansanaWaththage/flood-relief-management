@@ -13,20 +13,20 @@
     color: #111827;
 }
 
-/* Page background */
+
 body {
     background-color: #f8fafc;
     margin: 0;
     padding: 0;
 }
 
-/* Form container */
+
 .form {
     width: 60%;
     margin: 40px auto;
 }
 
-/* Form card */
+
 form {
     background-color: #ffffff;
     padding: 30px 40px;
@@ -34,7 +34,7 @@ form {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-/* Labels */
+
 label {
     display: block;
     font-size: 14px;
@@ -44,11 +44,9 @@ label {
     text-align: left;
 }
 
-/* Inputs */
-input[type=text],
-input[type=password],
-input[type=email],
-select {
+
+input[type=text],input[type=password],input[type=email],select 
+{
     width: 100%;
     padding: 10px 12px;
     margin-top: 6px;
@@ -58,17 +56,17 @@ select {
     box-sizing: border-box;
 }
 
-/* Focus state */
+
 input:focus,
 select:focus {
     outline: none;
     border-color: #2563eb;
 }
 
-/* Buttons */
+
 button {
     width: 100%;
-    background-color: #256f46; /* calm relief green */
+    background-color: #256f46; 
     color: #ffffff;
     padding: 12px;
     margin-top: 20px;
@@ -82,7 +80,7 @@ button:hover {
     background-color: #1f5f3b;
 }
 
-/* Paragraph text */
+
 p {
     font-size: 14px;
     color: #4b5563;
@@ -90,9 +88,5 @@ p {
     margin-top: 15px;
 }
 
-.btn btn-relief
-{
-   background-color: #1f5f3b;
-}
-   
+
 
