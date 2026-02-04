@@ -1,4 +1,3 @@
-/* Page headings */
 .Login/Register {
     font-weight: 500;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -57,14 +56,15 @@ input[type=text],input[type=password],input[type=email],select
 }
 
 
-input:focus,
-select:focus {
+input:focus,select:focus
+ {
     outline: none;
     border-color: #2563eb;
 }
 
 
-button {
+button
+ {
     width: 100%;
     background-color: #256f46; 
     color: #ffffff;
@@ -76,12 +76,14 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+button:hover 
+{
     background-color: #1f5f3b;
 }
 
 
-p {
+p 
+{
     font-size: 14px;
     color: #4b5563;
     text-align: center;
