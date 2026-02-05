@@ -10,8 +10,13 @@
    <nav class="navbar bg-body-tertiary">
   <form class="container-fluid justify-content-start">
      <a href="index.php" class="btn btn-outline-success me-2">Home</a>
-   <a href="login.php" class="btn btn-outline-success me-2">Login</a>
-   <a href="Register.php" class="btn btn-outline-success me-2">Register</a>
+     <a href="login.php"  class="btn btn-outline-success me-2">Login</a>
+    <a href="user-Register.php" class="btn btn-outline-success me-2">Register as user</a>
+    <a href="admin-Register.php" class="btn btn-outline-success me-2">Register as admin</a>
   </form>
 </nav>
 <div class="main" style="margin:20px">
+
+<?php
+include_once ("db_connect.php");
+?>
