@@ -1,128 +1,143 @@
 <?php
-require_once("header.php");
-include_once ("db_connect.php");
-?>
+session_start();
+require_once("db_connect.php");
 
-<?php
+if(isset($_SESSION['user_id'])) {
+    header("Location: index.php");
+    exit();
+}
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
-    session_start();
-    require_once 'db_connect.php';
-
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        header("Location: ../user-Register.php?error=invalid_access");
-        exit();
-    }
-
-    $full_name = mysqli_real_escape_string($conn, $_POST['Name'] ?? '');
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
+    $fullname = mysqli_real_escape_string($conn, $_POST['fullname'] ?? '');
     $email = mysqli_real_escape_string($conn, $_POST['email'] ?? '');
-    $contact = mysqli_real_escape_string($conn, $_POST['Contact_Number'] ?? '');
-    $district = mysqli_real_escape_string($conn, $_POST['District'] ?? '');
-    $divisional_secretariat = mysqli_real_escape_string($conn, $_POST['Divisional_Secretariat'] ?? '');
-    $gn_division = mysqli_real_escape_string($conn, $_POST['Grama_Niladari_Division'] ?? '');
-    $password = $_POST['Pwd'] ?? '';
-    $repeat_password = $_POST['repeatPwd'] ?? '';
-
+    $contact = mysqli_real_escape_string($conn, $_POST['contact'] ?? '');
+    $district = mysqli_real_escape_string($conn, $_POST['district'] ?? '');
+    $address = mysqli_real_escape_string($conn, $_POST['address'] ?? '');
+    $family_members = mysqli_real_escape_string($conn, $_POST['family_members'] ?? '');
+    $divisional_secretariat = mysqli_real_escape_string($conn, $_POST['divisional_secretariat'] ?? '');
+    $gn_division = mysqli_real_escape_string($conn, $_POST['gn_division'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $repeat_password = $_POST['repeat_password'] ?? '';
+    
     $errors = [];
-
-    $required = ['Name', 'email', 'Pwd', 'repeatPwd'];
-    foreach ($required as $field) {
-        if (empty($_POST[$field])) {
-            $errors[] = ucfirst(str_replace('_', ' ', $field)) . " is required";
-        }
+    
+    
+    if(empty($fullname) || empty($email) || empty($password)) {
+        $errors[] = "All required fields must be filled";
     }
-
-    if ($password !== $repeat_password) {
+    
+    if($password !== $repeat_password) {
         $errors[] = "Passwords do not match";
     }
-
-    if (strlen($password) < 8) {
+    
+    if(strlen($password) < 8) {
         $errors[] = "Password must be at least 8 characters";
     }
-
-    $check_email = "SELECT user_id FROM Users WHERE Email = '$email'";
-    $result = mysqli_query($conn, $check_email);
-    if (mysqli_num_rows($result) > 0) {
+    
+    
+    $check_sql = "SELECT user_id FROM Users WHERE Email = '$email'";
+    $check_result = mysqli_query($conn, $check_sql);
+    if(mysqli_num_rows($check_result) > 0) {
         $errors[] = "Email already registered";
     }
-
-    if (empty($errors)) {
+    
+    if(empty($errors)) {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         $role = 'user';
         
-        $sql = "INSERT INTO Users (full_name, Email, password, role, contact_number, 
-                district, divisional_secretariat, gn_division, created_at) 
-                VALUES ('$full_name', '$email', '$hashed_password', '$role', 
-                '$contact', '$district', '$divisional_secretariat', '$gn_division', NOW())";
+        $sql = "INSERT INTO Users (fullname, Email, password, role, contact_number, district, address, family_members, divisional_secretariat, gn_division) 
+                VALUES ('$fullname', '$email', '$hashed_password', '$role', '$contact', '$district', '$address', '$family_members', '$divisional_secretariat', '$gn_division')";
         
-        if (mysqli_query($conn, $sql)) {
+        if(mysqli_query($conn, $sql)) {
             $_SESSION['success'] = "Registration successful! Please login.";
-            header("Location: ../login.php?success=registered");
+            header("Location: login.php");
             exit();
         } else {
             $errors[] = "Database error: " . mysqli_error($conn);
         }
     }
-
-    $_SESSION['errors'] = $errors;
-    header("Location: ../user-Register.php");
-    exit();
+    
+    if(!empty($errors)) {
+        $_SESSION['error'] = implode("<br>", $errors);
+        header("Location: user-Register.php");
+        exit();
+    }
 }
-
 ?>
 
-<div class="form">
-<h1>Enter the required details</h1>
+<?php include_once("header.php"); ?>
 
- <form method="post" action="">
-  <label>Name</label>
-  <input type="text" id="fname" name="Name" placeholder="Enter the full Name">
-
-  <label >Email</label>
-  <input type="text" id="email" name="email" placeholder="....@gmail.com">
-
-  <label>Contact Number</label>
-  <input type="text" id="contact" name="Contact Number" placeholder="+94........">
-
-  <label>District</label>
-  <select name="District" id="district">
-    <option value="Colombo">Colombo</option>
-    <option value="Gampaha">Gampaha</option>
-    <option value="Kalutara">Kalutara</option>
-    <option value="Kandy">Kandy</option>
-    <option value="Matale">Matale</option>
-    <option value="Nuwara Eliya">Nuwara Eliya</option>
-    <option value="Galle">Galle</option>
-    <option value="Matara">Matara</option>
-    <option value="Hambantota">Hambantota</option>
-    <option value="Jaffna">Jaffna</option>
-    <option value="Kilinochchi">Kilinochchi</option>
-    <option value="Mannar">Mannar</option>
-    <option value="Vavuniya">Vavuniya</option>
-    <option value="Mullaitivu">Mullaitivu</option>
-    <option value="Batticaloa">Batticaloa</option>
-    <option value="Ampara">Ampara</option>
-    <option value="Trincomalee">Trincomalee</option>
-    <option value="Kurunegala">Kurunegala</option>
-  </select>
-
-  <label>Divisional Secretariat</label>
-    <input type="text" id="ds" name="Divisional Secretariat" placeholder="Enter the Divisional Secretariat">
-
-    <label>Grama Niladari Division</label>
-    <input type="text" id="gnd" name="Grama Niladari Division" placeholder="Enter the Grama Niladari Division">
-
-    <label >Password</label>
-  <input type="password" id="pwd" name="Pwd" placeholder="Password">
-  
-  <label >Repeat the password</label>
-  <input type="password" id="repeatPwd" name="repeatPwd" placeholder="Password">
-
-  <button id="userregbtn" type="submit" name="submit">Register</button>  
- </form>
+<div class="form-container">
+    <h2>User Registration</h2>
+    
+    <form method="post" action="" onsubmit="return validateForm()">
+        <label>Full Name *</label>
+        <input type="text" name="fullname" required>
+        
+        <label>Email *</label>
+        <input type="email" name="email" required>
+        
+        <label>Contact Number</label>
+        <input type="text" name="contact" placeholder="+94xxxxxxxxx">
+        
+        <label>District *</label>
+        <select name="district" required>
+            <option value="">Select District</option>
+            <option value="Colombo">Colombo</option>
+            <option value="Gampaha">Gampaha</option>
+            <option value="Kalutara">Kalutara</option>
+            <option value="Kandy">Kandy</option>
+            <option value="Matale">Matale</option>
+            <option value="Nuwara Eliya">Nuwara Eliya</option>
+            <option value="Galle">Galle</option>
+            <option value="Matara">Matara</option>
+            <option value="Hambantota">Hambantota</option>
+            <option value="Jaffna">Jaffna</option>
+        </select>
+        
+        <label>Address</label>
+        <textarea name="address" rows="2"></textarea>
+        
+        <label>Number of Family Members</label>
+        <input type="number" name="family_members" min="1">
+        
+        <label>Divisional Secretariat</label>
+        <input type="text" name="divisional_secretariat">
+        
+        <label>GN Division</label>
+        <input type="text" name="gn_division">
+        
+        <label>Password * (min 8 characters)</label>
+        <input type="password" name="password" required>
+        
+        <label>Repeat Password *</label>
+        <input type="password" name="repeat_password" required>
+        
+        <button type="submit" name="submit">Register</button>
+    </form>
+    
+    <p style="margin-top: 15px;">
+        Already have an account? <a href="login.php">Login here</a>
+    </p>
 </div>
-<a href="login.php" class="btn btn-relief">Already have an account?Click Here</a>
- 
-<?php
-include_once ("footer.php");
-?>
+
+<script>
+function validateForm() {
+    let password = document.querySelector('input[name="password"]').value;
+    let repeat = document.querySelector('input[name="repeat_password"]').value;
+    
+    if(password.length < 8) {
+        alert("Password must be at least 8 characters");
+        return false;
+    }
+    
+    if(password !== repeat) {
+        alert("Passwords do not match");
+        return false;
+    }
+    
+    return true;
+}
+</script>
+
+<?php include_once("footer.php"); ?>
